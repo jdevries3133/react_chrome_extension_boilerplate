@@ -17,9 +17,9 @@ var path = require("path"),
 
 module.exports = {
   entry: {
-    popup: path.join(__dirname, "src", "popup.entrypoint.js"),
-    options: path.join(__dirname, "src", "options.entrypoint.js"),
-    background: path.join(__dirname, "src", "background.entrypoint.js"),
+    popup: path.join(__dirname, "src", "popup", "index.js"),
+    options: path.join(__dirname, "src", "options", "index.js"),
+    background: path.join(__dirname, "src", "background", "index.js"),
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -33,6 +33,9 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-react"],
+          },
         },
         resolve: {
           extensions: [".js", ".jsx"],
@@ -74,40 +77,24 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: "./package.json",
+          from: "./src/manifest.json",
           to: "./manifest.json",
-
-          transform(content) {
-            // manifest.json merges description and version from package.json
-            return Buffer.from(
-              JSON.stringify({
-                description: process.env.npm_package_description,
-                version: process.env.npm_package_version,
-                manifest_version: 2,
-                ...JSON.parse(content.toString()),
-              })
-            );
-          },
         },
       ],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "html_templates", "popup.html"),
+      entry: path.join(__dirname, "src", "popup", "index.js"),
+      template: path.join(__dirname, "src", "popup", "template.html"),
       filename: "popup.html",
       chunks: ["popup"],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "html_templates", "options.html"),
+      template: path.join(__dirname, "src", "options", "template.html"),
       filename: "options.html",
       chunks: ["options"],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(
-        __dirname,
-        "src",
-        "html_templates",
-        "background.html"
-      ),
+      template: path.join(__dirname, "src", "background", "template.html"),
       filename: "background.html",
       chunks: ["background"],
     }),
