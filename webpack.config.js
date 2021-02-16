@@ -1,5 +1,4 @@
-var webpack = require("webpack"),
-  path = require("path"),
+var path = require("path"),
   CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin,
   CopyWebpackPlugin = require("copy-webpack-plugin"),
   HtmlWebpackPlugin = require("html-webpack-plugin"),
@@ -18,9 +17,9 @@ var webpack = require("webpack"),
 
 module.exports = {
   entry: {
-    popup: path.join(__dirname, "src", "js", "popup.js"),
-    options: path.join(__dirname, "src", "js", "options.js"),
-    background: path.join(__dirname, "src", "js", "background.js"),
+    popup: path.join(__dirname, "src", "popup.entrypoint.js"),
+    options: path.join(__dirname, "src", "options.entrypoint.js"),
+    background: path.join(__dirname, "src", "background.entrypoint.js"),
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -29,6 +28,7 @@ module.exports = {
   module: {
     rules: [
       {
+        // react js(x) files
         test: /\.js(x)?$/,
         exclude: /node_modules/,
         use: {
@@ -39,9 +39,31 @@ module.exports = {
         },
       },
       {
-        test: /\.html$/,
-        loader: "html-loader",
-        exclude: /node_modules/,
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+        ],
+        include: /\.module\.css$/,
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+        exclude: /\.module\.css$/,
+      },
+      {
+        // regular files, listed above
+        test: new RegExp(".(" + fileExtensions.join("|") + ")$"),
+        loader: "file-loader",
+        options: {
+          name: "[path][name].[ext]",
+        },
       },
     ],
   },
@@ -49,7 +71,6 @@ module.exports = {
     // clean the build folder
     new CleanWebpackPlugin(),
     // expose and write the allowed env vars on the compiled bundle
-    new webpack.EnvironmentPlugin(["NODE_ENV"]),
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -70,17 +91,22 @@ module.exports = {
       ],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "popup.html"),
+      template: path.join(__dirname, "src", "html_templates", "popup.html"),
       filename: "popup.html",
       chunks: ["popup"],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "options.html"),
+      template: path.join(__dirname, "src", "html_templates", "options.html"),
       filename: "options.html",
       chunks: ["options"],
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "background.html"),
+      template: path.join(
+        __dirname,
+        "src",
+        "html_templates",
+        "background.html"
+      ),
       filename: "background.html",
       chunks: ["background"],
     }),
