@@ -1,4 +1,10 @@
-# Google Classroom Mass Delete
+# React Chrome Extension Boilerplate
 
-A dead simple Chrome(ium) browser extension to allow teachers to delete google
-classroom assignments a topic at a time.
+Boilerplate for a Chrome extension that uses React for the popup and options
+views. Babel and webpack are all setup, and you can even use ES6 modules and
+modern syntax for the `background.js` file, because it goes through the same
+bundling and transpilation.
+
+Basically, a modern revamp of
+[this project,](https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate/tree/react)
+which now appears to be dead.
