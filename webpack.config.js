@@ -75,7 +75,7 @@ module.exports = {
       patterns: [
         {
           from: "./package.json",
-          to: "./dist/manifest.json",
+          to: "./manifest.json",
 
           transform(content) {
             // manifest.json merges description and version from package.json
@@ -83,6 +83,7 @@ module.exports = {
               JSON.stringify({
                 description: process.env.npm_package_description,
                 version: process.env.npm_package_version,
+                manifest_version: 2,
                 ...JSON.parse(content.toString()),
               })
             );
